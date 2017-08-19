@@ -1,0 +1,10 @@
+*.egg-info/
+*.pyc
+.cache/
+build/
+dist/
+tmp/
+.pypirc
+/.env
+/.coverage
+/htmlcov
