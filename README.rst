@@ -56,3 +56,10 @@ Examples
     $ hnbex range usd
 
 .. image:: https://raw.githubusercontent.com/ihabunek/hnbex-cli/master/images/hnbex_range.png
+
+License
+-------
+
+Copyright © 2017 Ivan Habunek <ivan@habunek.com>
+
+Licensed under the GPLv3: http://www.gnu.org/licenses/gpl-3.0.html
