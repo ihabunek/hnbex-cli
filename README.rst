@@ -13,6 +13,16 @@ Displays exchange rates for Croatian Kuna (HRK) from the Croatian National Bank
 .. image:: https://img.shields.io/pypi/v/hnbex-cli.svg?maxAge=3600&style=flat-square
    :target: https://pypi.python.org/pypi/hnbex-cli
 
+Installation
+------------
+
+Install using pip:
+
+.. code-block::
+
+    pip install hnbex-cli
+
+
 Usage
 -----
 
