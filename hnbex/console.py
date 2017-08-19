@@ -138,10 +138,6 @@ def main():
 
     try:
         run_command(command_name, args)
-    except ApiError as e:
-        print_err(e)
-        print_err(str(e))
-        sys.exit(1)
     except Exception as e:
         print_err(str(e))
         sys.exit(1)
