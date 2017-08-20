@@ -27,6 +27,7 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     packages=["hnbex"],
+    python_requires='>=3.3',
     entry_points={
         'console_scripts': [
             'hnbex=hnbex.console:main',
