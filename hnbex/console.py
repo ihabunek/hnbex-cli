@@ -8,8 +8,8 @@ from collections import namedtuple
 from datetime import date, datetime
 
 from hnbex import commands
-from hnbex.output import print_out, print_err
-from hnbex.api import ApiError
+from hnbex.output import print_err
+
 
 Command = namedtuple("Command", ["name", "description", "arguments"])
 
@@ -17,12 +17,15 @@ CLIENT_WEBSITE = 'https://github.com/ihabunek/hnbex-cli'
 
 
 def date_type(value):
+    if value.lower() == 'today':
+        return date.today()
+
     try:
-        date = datetime.strptime(value, "%Y-%m-%d").date()
+        value = datetime.strptime(value, "%Y-%m-%d").date()
     except:
         raise ArgumentTypeError("Invalid date '{}'".format(value))
 
-    return date
+    return value
 
 
 def currency_type(value):
@@ -68,6 +71,7 @@ COMMANDS = [
     ),
 ]
 
+
 # Arguments used on every command
 COMMON_ARGS = [
     (["--no-color"], {
@@ -78,66 +82,39 @@ COMMON_ARGS = [
 ]
 
 
-def print_usage():
-    print_out("<green>hnbex</green> - exchange rates for HRK in your terminal")
-    print_out("")
-    print_out("Fetched from <yellow>HNB Exchange Rate Lookup API</yellow> by "
-              "<magenta>Good Code</magenta>")
-    print_out("https://hnbex.eu/")
-    print_out("")
-    print_out("Usage:")
+def get_parser():
+    description = """
+        Exhange rates for Croatian Kuna (HRK) published by the Croatian National Bank (HNB).
+        Data fetched from hnb.ex, a service provided by Dobar Kod.
+    """
 
-    max_name_len = max(len(c.name) for c in COMMANDS)
+    parser = ArgumentParser(prog='hnbex', description=description, epilog=CLIENT_WEBSITE)
+    parser.add_argument('--no-color', action='store_true', help='don\'t use ANSI colors in output')
+
+    subparsers = parser.add_subparsers(title="commands")
+
     for command in COMMANDS:
-        name = command.name.ljust(max_name_len + 2)
-        print_out("  <yellow>hnbex {}</yellow> {}".format(name, command.description))
+        sub = subparsers.add_parser(command.name, help=command.description)
 
-    print_out("")
-    print_out("To get help for each command run:")
-    print_out("  <yellow>hnbex <command> --help</yellow>")
-    print_out("")
-    print_out("<green>{}</green>".format(CLIENT_WEBSITE))
+        # Set the function to call to the function of same name in the "commands" package
+        sub.set_defaults(func=commands.__dict__.get(command.name))
 
-
-def get_argument_parser(name, command):
-    parser = ArgumentParser(
-        prog='hnbex %s' % name,
-        description=command.description,
-        epilog=CLIENT_WEBSITE)
-
-    for args, kwargs in command.arguments + COMMON_ARGS:
-        parser.add_argument(*args, **kwargs)
+        for args, kwargs in command.arguments + COMMON_ARGS:
+            sub.add_argument(*args, **kwargs)
 
     return parser
 
 
-def run_command(name, args):
-    command = next((c for c in COMMANDS if c.name == name), None)
-
-    if not command:
-        print_err("Unknown command '{}'".format(name))
-        sys.exit(1)
-
-    parser = get_argument_parser(name, command)
-    parsed_args = parser.parse_args(args)
-
-    fn = commands.__dict__.get(name)
-
-    if not fn:
-        raise NotImplementedError("Command '{}' does not have an implementation.".format(name))
-
-    return fn(**parsed_args.__dict__)
-
-
 def main():
-    command_name = sys.argv[1] if len(sys.argv) > 1 else None
-    args = sys.argv[2:]
+    parser = get_parser()
+    args = parser.parse_args()
 
-    if not command_name:
-        return print_usage()
+    if "func" not in args:
+        parser.print_help()
+        return
 
     try:
-        run_command(command_name, args)
+        args.func(**args.__dict__)
     except Exception as e:
         print_err(str(e))
         sys.exit(1)
