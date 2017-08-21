@@ -30,7 +30,7 @@ Show rates for all currencies on a given date (if not given, date defaults to to
 
 .. code-block::
 
-    hnbex daily 2017-07-03
+    $ hnbex daily 2017-07-03
 
 .. code-block::
 
@@ -58,12 +58,6 @@ Show rates for a single currency, for range of days (if dates not given defaults
 .. code-block::
 
     hnbex range usd 2017-07-03 2017-06-20
-
-Show rates for all currencies on a given date:
-
-.. code-block::
-
-    hnbex daily 2017-07-03
 
 .. code-block::
 
@@ -103,7 +97,7 @@ When converting to HRK, the target currency can be ommited:
 
 .. code-block::
 
-    hnbex convert 500 jpy
+    $ hnbex convert 500 jpy
 
 .. code-block::
 
@@ -115,7 +109,7 @@ If ``--value-only`` or ``-v`` option is used, only the resulting value will be o
 
 .. code-block::
 
-    hnbex convert 500 jpy
+    $ hnbex convert 500 jpy
 
 .. code-block::
 
@@ -125,7 +119,7 @@ The resulting value is rounded to 2 decimal places by default but can be changed
 
 .. code-block::
 
-    hnbex convert 500 jpy -p 10
+    $ hnbex convert 500 jpy -p 10
 
 .. code-block::
 
