@@ -5,7 +5,7 @@ import sys
 
 from argparse import ArgumentParser, ArgumentTypeError
 from collections import namedtuple
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from hnbex import commands
 from hnbex.api import ApiError
@@ -21,6 +21,9 @@ CLIENT_WEBSITE = 'https://github.com/ihabunek/hnbex-cli'
 def date_type(value):
     if value.lower() == 'today':
         return date.today()
+
+    if value.lower() == 'tomorrow':
+        return date.today() + timedelta(days=1)
 
     try:
         value = datetime.strptime(value, "%Y-%m-%d").date()
@@ -62,7 +65,7 @@ COMMANDS = [
                 "help": "the end date (defaults to today)",
                 "nargs": "?",
                 "type": date_type,
-                "default": date.today(),
+                "default": date.today() + timedelta(days=1),
             }),
             (["start_date"], {
                 "help": "the start date (defaults to 30 days before the end date)",
