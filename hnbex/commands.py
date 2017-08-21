@@ -15,7 +15,7 @@ def wrap(tag, text):
 def daily(date, **kwargs):
     rates = fetch_daily(date)
 
-    print_out("HNB exchange rates on <red>{:%Y-%m-%d}</red>".format(date))
+    print_out("HNB exchange rates on <yellow>{:%Y-%m-%d}</yellow>".format(date))
     print_out()
 
     data = [(
@@ -83,7 +83,7 @@ def range(currency, end_date, start_date, **kwargs):
     start_date, end_date = _range_dates(start_date, end_date)
     rates = fetch_range(currency, start_date, end_date)
 
-    title = ("HNB exchange rates for <red>{}</red> from <yellow>{:%Y-%m-%d}</yellow> to "
+    title = ("HNB exchange rates for <yellow>{}</yellow> from <yellow>{:%Y-%m-%d}</yellow> to "
              "<yellow>{:%Y-%m-%d}</yellow>")
 
     print_out(title.format(currency, start_date, end_date))
