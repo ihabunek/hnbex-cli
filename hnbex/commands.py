@@ -1,11 +1,15 @@
 from datetime import date, timedelta
 
 from hnbex.api import fetch_daily, fetch_range
-from hnbex.output import print_out
+from hnbex.output import print_out, print_table
 
 
 class CommandError(Exception):
     pass
+
+
+def wrap(tag, text):
+    return "<{}>{}</{}>".format(tag, text, tag)
 
 
 def daily(date, **kwargs):
@@ -13,17 +17,17 @@ def daily(date, **kwargs):
 
     print_out("HNB exchange rates on <red>{:%Y-%m-%d}</red>".format(date))
     print_out()
-    print_out("<yellow>Currency  Unit    Buying    Median   Selling</yellow>")
-    print_out("<yellow>--------  ----  --------  --------  --------</yellow>")
 
-    for line in rates:
-        print_out("<yellow>{:9}</yellow> {:4}  {:8}  {:8}  {:8}".format(
-            line['currency_code'],
-            line['unit_value'],
-            line['buying_rate'],
-            line['median_rate'],
-            line['selling_rate'],
-        ))
+    data = [(
+        wrap('yellow', line['currency_code']),
+        line['unit_value'],
+        line['buying_rate'],
+        line['median_rate'],
+        line['selling_rate'],
+    ) for line in rates]
+
+    headers = ["Currency", "Unit", "Buying", "Median", "Selling"]
+    print_table(headers, data)
 
 
 def _range_dates(start_date, end_date):
@@ -64,7 +68,7 @@ def _range_lines(rates):
         diff_median = _diff(prev_median, median)
 
         yield(
-            line['date'],
+            wrap('yellow', line['date']),
             line['unit_value'],
             line['buying_rate'],
             line['median_rate'],
@@ -89,11 +93,8 @@ def range(currency, end_date, start_date, **kwargs):
         print_out("No data found for given date range")
         return
 
-    print_out("<yellow>Date        Unit    Buying    Median   Selling    Diff</yellow>")
-    print_out("<yellow>----------  ----  --------  --------  --------  ------</yellow>")
-
-    for line in _range_lines(rates):
-        print_out("<yellow>{:11}</yellow> {:4}  {:8}  {:8}  {:8}  {}".format(*line))
+    headers = ['Date', 'Unit', 'Buying', 'Median', 'Selling', 'Diff']
+    print_table(headers, _range_lines(rates))
 
 
 def _get_median_rate(rates, currency):
