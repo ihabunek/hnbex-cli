@@ -1,6 +1,11 @@
 hnbex-cli changelog
 ====================
 
+**0.4.0 (2017-08-21)**
+
+* Add spread to `daily` command
+* Internal improvements
+
 **0.3.0 (2017-08-21)**
 
 * Add `convert` command

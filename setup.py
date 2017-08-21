@@ -7,7 +7,7 @@ with open("README.rst") as readme:
 
 setup(
     name='hnbex-cli',
-    version='0.3.0',
+    version='0.4.0',
     description='CLI tool for displaying exchange rates for Croatian Kuna (HRK)',
     long_description=long_description,
     author='Ivan Habunek',
