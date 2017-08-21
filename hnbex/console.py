@@ -8,6 +8,8 @@ from collections import namedtuple
 from datetime import date, datetime
 
 from hnbex import commands
+from hnbex.api import ApiError
+from hnbex.commands import CommandError
 from hnbex.output import print_err
 
 
@@ -69,6 +71,41 @@ COMMANDS = [
             }),
         ],
     ),
+    Command(
+        name="convert",
+        description="Convert between currencies",
+        arguments=[
+            (["amount"], {
+                "help": "the amount to convert",
+                "type": float,
+            }),
+            (["source_currency"], {
+                "help": "currency from which to convert",
+                "type": currency_type,
+            }),
+            (["target_currency"], {
+                "help": "currency code to which to convert (defaults to HRK)",
+                "type": currency_type,
+                "default": "HRK",
+                "nargs": "?",
+            }),
+            (["-d", "--date"], {
+                "help": "the lookup date (defaults to today)",
+                "type": date_type,
+                "default": date.today(),
+            }),
+            (["-v", "--value-only"], {
+                "help": "output only the conversion result, no verbose output",
+                "action": 'store_true',
+                "default": False,
+            }),
+            (["-p", "--precision"], {
+                "help": "number of decimals to round the resulting value (defaults to 2)",
+                "type": int,
+                "default": 2,
+            }),
+        ],
+    ),
 ]
 
 
@@ -115,6 +152,9 @@ def main():
 
     try:
         args.func(**args.__dict__)
-    except Exception as e:
+    except CommandError as e:
+        print_err(str(e))
+        sys.exit(1)
+    except ApiError as e:
         print_err(str(e))
         sys.exit(1)

@@ -4,6 +4,10 @@ from hnbex.api import fetch_daily, fetch_range
 from hnbex.output import print_out
 
 
+class CommandError(Exception):
+    pass
+
+
 def daily(date, **kwargs):
     rates = fetch_daily(date)
 
@@ -30,7 +34,7 @@ def _range_dates(start_date, end_date):
         start_date = end_date - timedelta(days=30)
 
     if start_date > end_date:
-        raise Exception("start_date is greater than end_date")
+        raise CommandError("start_date is greater than end_date")
 
     return start_date, end_date
 
@@ -90,3 +94,45 @@ def range(currency, end_date, start_date, **kwargs):
 
     for line in _range_lines(rates):
         print_out("<yellow>{:11}</yellow> {:4}  {:8}  {:8}  {:8}  {}".format(*line))
+
+
+def _get_median_rate(rates, currency):
+    for rate in rates:
+        if rate['currency_code'] == currency:
+            return float(rate['median_rate']), int(rate['unit_value'])
+
+    raise CommandError("Exchange rate for {} not found".format(currency))
+
+
+def convert(amount, source_currency, target_currency, date, precision, value_only, **kwargs):
+    if precision < 0:
+        raise CommandError("Precision must be greater than 0.")
+
+    if source_currency != 'HRK' and target_currency != 'HRK':
+        raise CommandError("Either source or target currency must be HRK.")
+
+    if source_currency == target_currency:
+        raise CommandError("Source and target currency are the same.")
+
+    if source_currency == 'HRK':
+        rates = fetch_daily(date)
+        currency = target_currency
+        rate, units = _get_median_rate(rates, currency)
+        result = amount / (rate / units)
+
+    elif target_currency == 'HRK':
+        rates = fetch_daily(date)
+        currency = source_currency
+        rate, units = _get_median_rate(rates, currency)
+        result = amount * (rate / units)
+
+    pattern = "{{:.{}f}}".format(precision)
+    rounded = pattern.format(result)
+
+    if value_only:
+        print_out(rounded)
+    else:
+        print_out("{} {} = <green>{} {}</green>".format(
+            amount, source_currency, rounded, target_currency))
+        print_out("\nUsing the median rate {} {} = {} HRK defined on {}".format(
+            units, currency, rate, date))
