@@ -16,6 +16,8 @@ Displays exchange rates for Croatian Kuna (HRK) from the Croatian National Bank
 Installation
 ------------
 
+Requires **Python 3.3** or greater.
+
 Install using pip:
 
 .. code-block::
