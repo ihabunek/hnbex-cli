@@ -18,15 +18,23 @@ def daily(date, **kwargs):
     print_out("HNB exchange rates on <yellow>{:%Y-%m-%d}</yellow>".format(date))
     print_out()
 
+    def spread(line):
+        buy = float(line['buying_rate'])
+        sell = float(line['selling_rate'])
+        if sell > 0:
+            return "{:.2%}".format((sell - buy) / sell)
+        return ""
+
     data = [(
         wrap('yellow', line['currency_code']),
         line['unit_value'],
         line['buying_rate'],
         line['median_rate'],
         line['selling_rate'],
+        spread(line)
     ) for line in rates]
 
-    headers = ["Currency", "Unit", "Buying", "Median", "Selling"]
+    headers = ["Currency", "Unit", "Buying", "Median", "Selling", "Spread"]
     print_table(headers, data)
 
 
