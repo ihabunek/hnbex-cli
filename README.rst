@@ -18,11 +18,12 @@ Installation
 
 Requires **Python 3.3** or greater.
 
-### From APT package repository
+From APT package repository
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 This works for Debian, Ubuntu and other derivatives.
 
-The repo is signed with my [keybase.io](https://keybase.io/ihabunek) key.
+The repo is signed with my `keybase.io <https://keybase.io/ihabunek>`_ key.
 
 .. code-block::
 
@@ -32,7 +33,10 @@ The repo is signed with my [keybase.io](https://keybase.io/ihabunek) key.
     sudo apt update
     sudo apt install python3-hnbex-cli
 
-### From Python Package Index
+From Python Package Index
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Preferably install into a virtual environment.
 
 .. code-block::
 
