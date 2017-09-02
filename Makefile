@@ -13,10 +13,14 @@ dist :
 
 clean :
 	find . -name "*pyc" | xargs rm -rf $1
-	rm -rf build dist *.egg-info MANIFEST htmlcov
+	rm -rf build dist *.egg-info MANIFEST htmlcov deb_dist
+	rm -f hnbex-cli-*.tar.gz
 
 publish :
 	twine upload dist/*
 
 coverage:
 	py.test --cov=toot --cov-report html tests/
+
+deb:
+	@python setup.py --command-packages=stdeb.command bdist_deb
