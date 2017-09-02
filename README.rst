@@ -18,7 +18,21 @@ Installation
 
 Requires **Python 3.3** or greater.
 
-Install using pip:
+### From APT package repository
+
+This works for Debian, Ubuntu and other derivatives.
+
+The repo is signed with my [keybase.io](https://keybase.io/ihabunek) key.
+
+.. code-block::
+
+    echo "deb http://bezdomni.net/packages/ ./" | sudo tee /etc/apt/sources.list.d/bezomni.list
+    curl https://keybase.io/ihabunek/pgp_keys.asc | sudo apt-key add -
+
+    sudo apt update
+    sudo apt install python3-hnbex-cli
+
+### From Python Package Index
 
 .. code-block::
 
