@@ -105,7 +105,7 @@ Convert between HRK and anouther currency:
 
 .. code-block::
 
-    $ hnbex convert 100 hrk usd
+    $ hnbex convert 150 hrk usd
 
 .. code-block::
 
