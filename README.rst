@@ -18,6 +18,8 @@ Installation
 
 Requires **Python 3.3** or greater.
 
+Drawing charts requires [gnuplot](http://www.gnuplot.info/).
+
 From APT package repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -46,6 +48,16 @@ Preferably install into a virtual environment.
 Usage
 -----
 
+Commands:
+
+* ``daily``   - Show daily exchange rates for all currencies
+* ``range``   - Show exchange rates for a single currency in the given date range
+* ``chart``   - Draw exchange rate chart for a single currency
+* ``convert`` - Convert between currencies
+
+Daily
+~~~~~
+
 Show rates for all currencies on a given date (if not given, date defaults to today):
 
 .. code-block::
@@ -72,6 +84,9 @@ Show rates for all currencies on a given date (if not given, date defaults to to
     EUR          1  7.385326  7.407549  7.429772
     PLN          1  1.748834  1.754096  1.759358
 
+
+Range
+~~~~~
 
 Show rates for a single currency, for range of days (if dates not given defaults to last 30 days):
 
@@ -100,6 +115,55 @@ Show rates for a single currency, for range of days (if dates not given defaults
     2017-07-02     1  6.474949  6.494432  6.513915   0.00%
     2017-07-03     1  6.474949  6.494432  6.513915   0.00%
 
+Chart
+~~~~~
+
+This command requires [gnuplot](http://www.gnuplot.info/) to be installed.
+
+Draw a chart of exchange rate movement for range of days (if dates not given defaults to last 30 days):
+
+.. code-block::
+
+    hnbex chart usd
+
+.. code-block::
+
+                                  USD Exchange Rates
+
+    6.42 +-+--+-+-+-+--+-+-+-+--+-+-+-+--+-+-+--+-+-+-+--+-+-+-+--+-+-+-+--+-+
+         |             +              +               +    x*x*x**    +      |
+     6.4 +-+                                              *                +-+
+    6.38 +-+                                      x*x*    *       x        +-+
+         |                            x**x       *    x**x         *         |
+    6.36 +-+                          *   *      *                 *       +-+
+         |                           *     x*x**x                   x*x    x*x
+    6.34 +-+                         *                                 * **+-+
+         |                          x                                   x    |
+    6.32 +-+                       *                                       +-+
+     6.3 +-+                       *                                       +-+
+         |                        x                                          |
+    6.28 +-+             x        *                                        +-+
+         x*x**x*x*       **      *                                           |
+    6.26 +-+      x*    * *      *                                         +-+
+    6.24 +-+        x** *  *    *                                          +-+
+         |             *   x*x**x     +               +               +      |
+    6.22 +-+--+-+-+-+--x-+-+-+--+-+-+-+--+-+-+--+-+-+-+--+-+-+-+--+-+-+-+--+-+
+                     09/21          09/28           10/05           10/12
+                                         Date
+
+Also supports graphical charts:
+
+.. code-block::
+
+    hnbex chart usd --template qt
+
+Which displays the chart:
+
+.. image:: ./chart_qt.png
+
+
+Convert
+~~~~~~~
 
 Convert between HRK and anouther currency:
 

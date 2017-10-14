@@ -75,6 +75,33 @@ COMMANDS = [
         ],
     ),
     Command(
+        name="chart",
+        description="Draw exchange rate chart for a single currency",
+        arguments=[
+            (["currency"], {
+                "help": "the currency code, e.g. USD",
+                "type": currency_type,
+            }),
+            (["end_date"], {
+                "help": "the end date (defaults to today)",
+                "nargs": "?",
+                "type": date_type,
+                "default": date.today() + timedelta(days=1),
+            }),
+            (["start_date"], {
+                "help": "the start date (defaults to 30 days before the end date)",
+                "nargs": "?",
+                "type": date_type,
+            }),
+            (["-t", "--template"], {
+                "help": "GnuPlot script template to use (qt is graphical, dumb is textual)",
+                "choices": ["qt", "dumb"],
+                "type": str,
+                "default": "dumb",
+            }),
+        ],
+    ),
+    Command(
         name="convert",
         description="Convert between currencies",
         arguments=[

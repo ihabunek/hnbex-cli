@@ -1,7 +1,11 @@
+import tempfile
+
 from datetime import date, timedelta
+from os.path import realpath, join, dirname
+from subprocess import call
 
 from hnbex.api import fetch_daily, fetch_range
-from hnbex.output import print_out, print_table
+from hnbex.output import print_out, print_err, print_table
 
 
 class CommandError(Exception):
@@ -145,3 +149,42 @@ def convert(amount, source_currency, target_currency, date, precision, value_onl
             amount, source_currency, rounded, target_currency))
         print_out("\nUsing the median rate {} {} = {} HRK defined on {}".format(
             units, currency, rate, date))
+
+
+def abspath(path):
+    return join(realpath(dirname(__file__)), path)
+
+
+def chart(currency, end_date, start_date, template, **kwargs):
+    start_date, end_date = _range_dates(start_date, end_date)
+    rates = fetch_range(currency, start_date, end_date)
+    plot_data = "\n".join(["{} {}".format(rate['date'], rate['median_rate'])
+        for rate in rates])
+
+    with open(abspath('../templates/{}.gnuplot'.format(template))) as f:
+        script_template = f.read()
+
+    with tempfile.NamedTemporaryFile() as script_file:
+        with tempfile.NamedTemporaryFile() as data_file:
+            script = script_template.format(
+                currency=currency,
+                start_date=start_date,
+                end_date=end_date,
+                data_file=data_file.name,
+            )
+
+            script_file.write(script.encode('utf-8'))
+            script_file.flush()
+
+            data_file.write(plot_data.encode('utf-8'))
+            data_file.flush()
+
+            _plot(script_file, data_file)
+
+
+def _plot(script_file, data_file):
+    try:
+        call(['gnuplot', '-c', script_file.name, '-p'])
+    except FileNotFoundError as ex:
+        print_err(ex)
+        raise CommandError("Charting failed. Do you have gnuplot installed?")
