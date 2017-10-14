@@ -18,7 +18,7 @@ Installation
 
 Requires **Python 3.3** or greater.
 
-Drawing charts requires [gnuplot](http://www.gnuplot.info/).
+Drawing charts requires `gnuplot <http://www.gnuplot.info/>`_.
 
 From APT package repository
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -29,7 +29,7 @@ The repo is signed with my `keybase.io <https://keybase.io/ihabunek>`_ key.
 
 .. code-block::
 
-    echo "deb http://bezdomni.net/packages/ ./" | sudo tee /etc/apt/sources.list.d/bezomni.list
+    echo "deb http://bezdomni.net/packages/ ./" | sudo tee /etc/apt/sources.list.d/bezdomni.list
     curl https://keybase.io/ihabunek/pgp_keys.asc | sudo apt-key add -
 
     sudo apt update
@@ -118,7 +118,7 @@ Show rates for a single currency, for range of days (if dates not given defaults
 Chart
 ~~~~~
 
-This command requires [gnuplot](http://www.gnuplot.info/) to be installed.
+This command requires `gnuplot <http://www.gnuplot.info/>`_ to be installed.
 
 Draw a chart of exchange rate movement for range of days (if dates not given defaults to last 30 days):
 
