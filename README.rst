@@ -69,39 +69,41 @@ Show rates for all currencies on a given date (if not given, date defaults to to
 Range
 ~~~~~
 
-Show rates for a single currency, for range of days (if dates not given defaults to last 30 days):
+Show rates for a single currency, for range of days.
+
+The range defaults to the last 30 days, and can be changed by giving one or more of:
+
+* ``--start`` or ``-s`` - the first day of the range (default calculated as ``end - days``)
+* ``--end`` or ``-e`` - the last day of the range (defaults to tomorrow)
+* ``--days`` or ``-d`` - number of days in the range (defaults to 30)
 
 .. code-block::
 
-    hnbex range usd 2017-07-03 2017-06-20
+    hnbex range usd -d 10
 
 .. code-block::
 
-    HNB exchange rates for USD from 2017-06-20 to 2017-07-03
+    HNB exchange rates for USD from 2021-08-26 to 2021-09-04
 
-    Date        Unit    Buying    Median   Selling    Diff
+          Date  Unit    Buying    Median   Selling    Diff
     ----------  ----  --------  --------  --------  ------
-    2017-06-20     1  6.583721  6.603532  6.623343
-    2017-06-21     1  6.615151  6.635056  6.654961  +0.48%
-    2017-06-22     1  6.628631  6.648577  6.668523  +0.20%
-    2017-06-23     1  6.628631  6.648577  6.668523   0.00%
-    2017-06-24     1  6.617416  6.637328  6.657240  -0.17%
-    2017-06-25     1  6.617416  6.637328  6.657240   0.00%
-    2017-06-26     1  6.617416  6.637328  6.657240   0.00%
-    2017-06-27     1  6.605447  6.625323  6.645199  -0.18%
-    2017-06-28     1  6.560526  6.580267  6.600008  -0.68%
-    2017-06-29     1  6.500769  6.520330  6.539891  -0.91%
-    2017-06-30     1  6.470754  6.490225  6.509696  -0.46%
-    2017-07-01     1  6.474949  6.494432  6.513915  +0.06%
-    2017-07-02     1  6.474949  6.494432  6.513915   0.00%
-    2017-07-03     1  6.474949  6.494432  6.513915   0.00%
+    2021-08-26     1  6.353770  6.372889  6.392008
+    2021-08-27     1  6.341215  6.360296  6.379377  -0.20%
+    2021-08-28     1  6.346328  6.365424  6.384520  +0.08%
+    2021-08-29     1  6.346328  6.365424  6.384520   0.00%
+    2021-08-30     1  6.346328  6.365424  6.384520   0.00%
+    2021-08-31     1  6.323093  6.342119  6.361145  -0.37%
+    2021-09-01     1  6.314960  6.333962  6.352964  -0.13%
+    2021-09-02     1  6.315040  6.334042  6.353044  +0.00%
+    2021-09-03     1  6.294947  6.313889  6.332831  -0.32%
+    2021-09-04     1  6.291559  6.310490  6.329421  -0.05%
 
 Chart
 ~~~~~
 
 This command requires `gnuplot <http://www.gnuplot.info/>`_ to be installed.
 
-Draw a chart of exchange rate movement for range of days (if dates not given defaults to last 30 days):
+Draw a chart of exchange rate movement for range of days. Options are identical as ``hnbex range``.
 
 .. code-block::
 
@@ -193,6 +195,6 @@ The resulting value is rounded to 2 decimal places by default but can be changed
 License
 -------
 
-Copyright © 2017 Ivan Habunek <ivan@habunek.com>
+Copyright © 2017-2021 Ivan Habunek <ivan@habunek.com>
 
 Licensed under the GPLv3: http://www.gnu.org/licenses/gpl-3.0.html
