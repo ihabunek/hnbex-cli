@@ -79,7 +79,7 @@ The range defaults to the last 30 days, and can be changed by giving one or more
 
 .. code-block::
 
-    hnbex range usd -d 10
+    $ hnbex range usd -d 10
 
 .. code-block::
 
@@ -107,7 +107,7 @@ Draw a chart of exchange rate movement for range of days. Options are identical 
 
 .. code-block::
 
-    hnbex chart usd
+    $ hnbex chart usd
 
 .. code-block::
 
@@ -138,7 +138,7 @@ Also supports graphical charts:
 
 .. code-block::
 
-    hnbex chart usd --template qt
+    $ hnbex chart usd --template qt
 
 Which displays the chart:
 
