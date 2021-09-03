@@ -40,6 +40,24 @@ def currency_type(value):
     return value.upper()
 
 
+RANGE_ARGS = [
+    (["-e", "--end"], {
+        "help": "the last day of the range (defaults to tomorrow)",
+        "type": date_type,
+        "default": date.today() + timedelta(days=1),
+    }),
+    (["-s", "--start"], {
+        "help": "the first day of the range (default calculated as `end - days`)",
+        "type": date_type,
+    }),
+    (["-d", "--days"], {
+        "help": "number of days in the range (defaults to 30)",
+        "type": int,
+        "default": 30
+    }),
+]
+
+
 COMMANDS = [
     Command(
         name="daily",
@@ -61,18 +79,7 @@ COMMANDS = [
                 "help": "the currency code, e.g. USD",
                 "type": currency_type,
             }),
-            (["end_date"], {
-                "help": "the end date (defaults to today)",
-                "nargs": "?",
-                "type": date_type,
-                "default": date.today() + timedelta(days=1),
-            }),
-            (["start_date"], {
-                "help": "the start date (defaults to 30 days before the end date)",
-                "nargs": "?",
-                "type": date_type,
-            }),
-        ],
+        ] + RANGE_ARGS,
     ),
     Command(
         name="chart",
@@ -82,24 +89,13 @@ COMMANDS = [
                 "help": "the currency code, e.g. USD",
                 "type": currency_type,
             }),
-            (["end_date"], {
-                "help": "the end date (defaults to today)",
-                "nargs": "?",
-                "type": date_type,
-                "default": date.today() + timedelta(days=1),
-            }),
-            (["start_date"], {
-                "help": "the start date (defaults to 30 days before the end date)",
-                "nargs": "?",
-                "type": date_type,
-            }),
             (["-t", "--template"], {
                 "help": "GnuPlot script template to use (qt is graphical, dumb is textual)",
                 "choices": ["qt", "dumb"],
                 "type": str,
                 "default": "dumb",
             }),
-        ],
+        ] + RANGE_ARGS,
     ),
     Command(
         name="convert",

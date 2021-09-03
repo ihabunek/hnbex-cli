@@ -1,6 +1,6 @@
 import tempfile
 
-from datetime import date, timedelta
+from datetime import timedelta
 from os.path import realpath, join, dirname
 from subprocess import call
 
@@ -42,17 +42,14 @@ def daily(date, **kwargs):
     print_table(headers, data)
 
 
-def _range_dates(start_date, end_date):
-    if not end_date:
-        end_date = date.today()
+def _range_dates(start, end, days):
+    if not start:
+        start = end - timedelta(days=days - 1)
 
-    if not start_date:
-        start_date = end_date - timedelta(days=30)
+    if start > end:
+        raise CommandError("Start date cannot be greater than end date")
 
-    if start_date > end_date:
-        raise CommandError("start_date is greater than end_date")
-
-    return start_date, end_date
+    return start, end
 
 
 def _diff(old, new):
@@ -91,8 +88,8 @@ def _range_lines(rates):
         prev_median = float(line['median_rate'])
 
 
-def range(currency, end_date, start_date, **kwargs):
-    start_date, end_date = _range_dates(start_date, end_date)
+def range(currency, start, end, days, **kwargs):
+    start_date, end_date = _range_dates(start, end, days)
     rates = fetch_range(currency, start_date, end_date)
 
     title = ("HNB exchange rates for <yellow>{}</yellow> from <yellow>{:%Y-%m-%d}</yellow> to "
@@ -155,8 +152,8 @@ def abspath(path):
     return join(realpath(dirname(__file__)), path)
 
 
-def chart(currency, end_date, start_date, template, **kwargs):
-    start_date, end_date = _range_dates(start_date, end_date)
+def chart(currency, template, start, end, days, **kwargs):
+    start_date, end_date = _range_dates(start, end, days)
     rates = fetch_range(currency, start_date, end_date)
     plot_data = "\n".join(["{} {}".format(rate['date'], rate['median_rate'])
         for rate in rates])
@@ -179,10 +176,10 @@ def chart(currency, end_date, start_date, template, **kwargs):
             data_file.write(plot_data.encode('utf-8'))
             data_file.flush()
 
-            _plot(script_file, data_file)
+            _plot(script_file)
 
 
-def _plot(script_file, data_file):
+def _plot(script_file):
     try:
         call(['gnuplot', '-c', script_file.name, '-p'])
     except FileNotFoundError as ex:
