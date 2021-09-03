@@ -1,6 +1,10 @@
 hnbex-cli changelog
 ====================
 
+**1.0.0 (2021-09-03)**
+
+* BREAKING: Changed options for specifying date range in ``hnbex range`` and ``hnbex chart``
+
 **0.5.0 (2017-10-14)**
 
 * Add `chart` command
