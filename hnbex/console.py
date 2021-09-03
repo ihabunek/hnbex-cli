@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import re
 import sys
 
@@ -141,6 +142,11 @@ COMMON_ARGS = [
         "help": "don't use ANSI colors in output",
         "action": 'store_true',
         "default": False,
+    }),
+    (["--debug"], {
+        "help": "log HTTP requests",
+        "action": 'store_true',
+        "default": False,
     })
 ]
 
@@ -169,6 +175,9 @@ def get_parser():
 
 
 def main():
+    if "--debug" in sys.argv:
+        logging.basicConfig(level=logging.DEBUG)
+
     parser = get_parser()
     args = parser.parse_args()
 

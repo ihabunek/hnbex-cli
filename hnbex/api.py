@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import json
+import logging
 
 from urllib.request import urlopen
 from urllib.error import HTTPError
+
+
+logger = logging.getLogger('hnbex')
 
 
 class ApiError(Exception):
@@ -24,11 +28,15 @@ def _process_error(e):
 
 
 def _api_get(url):
+    logger.debug(">>> GET {}".format(url))
+
     try:
-        with urlopen(url) as f:
-            data = f.read().decode('utf-8')
+        with urlopen(url) as response:
+            data = response.read().decode('utf-8')
+            logger.debug("<<< {}".format(data))
             return json.loads(data)
     except HTTPError as e:
+        logger.error("<<< {} {}".format(e.code, e.msg))
         _process_error(e)
 
 
