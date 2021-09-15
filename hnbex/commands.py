@@ -1,6 +1,7 @@
 import tempfile
 
 from datetime import timedelta
+from decimal import Decimal
 from importlib.resources import files
 from os.path import realpath, join, dirname
 from subprocess import call
@@ -14,30 +15,31 @@ class CommandError(Exception):
 
 
 def wrap(tag, text):
-    return "<{}>{}</{}>".format(tag, text, tag)
+    return f"<{tag}>{text}</{tag}>"
 
 
 def daily(date, **kwargs):
     rates = fetch_daily(date)
 
-    print_out("HNB exchange rates on <yellow>{:%Y-%m-%d}</yellow>".format(date))
+    print_out(f"HNB exchange rates on <yellow>{date:%Y-%m-%d}</yellow>")
     print_out()
 
-    def spread(line):
-        buy = float(line['buying_rate'])
-        sell = float(line['selling_rate'])
+    def spread(rate):
+        buy = rate.buying_rate
+        sell = rate.selling_rate
         if sell > 0:
-            return "{:.2%}".format((sell - buy) / sell)
+            diff = (sell - buy) / sell
+            return f"{diff:.2%}"
         return ""
 
     data = [(
-        wrap('yellow', line['currency_code']),
-        line['unit_value'],
-        line['buying_rate'],
-        line['median_rate'],
-        line['selling_rate'],
-        spread(line)
-    ) for line in rates]
+        wrap("yellow", rate.currency_code),
+        rate.unit_value,
+        rate.buying_rate,
+        rate.median_rate,
+        rate.selling_rate,
+        spread(rate)
+    ) for rate in rates]
 
     headers = ["Currency", "Unit", "Buying", "Median", "Selling", "Spread"]
     print_table(headers, data)
@@ -58,46 +60,46 @@ def _diff(old, new):
         return ""
 
     diff = (new - old) / old
-    formatted = "{:.2%}".format(diff)
+    formatted = f"{diff:.2%}"
 
     if diff < 0:
-        return "<red>{}</red>".format(formatted)
+        return f"<red>{formatted}</red>"
 
     if diff > 0:
-        return "<green>+{}</green>".format(formatted)
+        return f"<green>+{formatted}</green>"
 
-    return " " + formatted
+    return f" {formatted}"
 
 
 def _range_lines(rates):
     prev_median = None
     diff_median = None
 
-    for line in rates:
-        median = float(line['median_rate'])
+    for rate in rates:
+        median = rate.median_rate
         diff_median = _diff(prev_median, median)
 
         yield(
-            wrap('yellow', line['date']),
-            line['unit_value'],
-            line['buying_rate'],
-            line['median_rate'],
-            line['selling_rate'],
+            wrap("yellow", rate.date),
+            rate.unit_value,
+            rate.buying_rate,
+            rate.median_rate,
+            rate.selling_rate,
             diff_median,
         )
 
-        prev_median = float(line['median_rate'])
+        prev_median = rate.median_rate
 
 
 def range(currency, start, end, days, **kwargs):
     start_date, end_date = _range_dates(start, end, days)
     rates = fetch_range(currency, start_date, end_date)
 
-    title = ("HNB exchange rates for <yellow>{}</yellow> from <yellow>{:%Y-%m-%d}</yellow> to "
-             "<yellow>{:%Y-%m-%d}</yellow>")
-
-    print_out(title.format(currency, start_date, end_date))
-    print_out()
+    print_out(
+        f"HNB exchange rates for <yellow>{currency}</yellow> "
+        f"from <yellow>{start_date:%Y-%m-%d}</yellow> "
+        f"to <yellow>{end_date:%Y-%m-%d}</yellow>\n"
+    )
 
     if not rates:
         print_out("No data found for given date range")
@@ -107,12 +109,13 @@ def range(currency, start, end, days, **kwargs):
     print_table(headers, _range_lines(rates))
 
 
-def _get_median_rate(rates, currency):
-    for rate in rates:
-        if rate['currency_code'] == currency:
-            return float(rate['median_rate']), int(rate['unit_value'])
+def _get_rate(date, currency):
+    rates = fetch_daily(date, currency_code=currency)
 
-    raise CommandError("Exchange rate for {} not found".format(currency))
+    if rates:
+        return rates[0]
+
+    raise CommandError(f"Exchange rate for {currency} not found")
 
 
 def convert(amount, source_currency, target_currency, date, precision, value_only, **kwargs):
@@ -126,27 +129,23 @@ def convert(amount, source_currency, target_currency, date, precision, value_onl
         raise CommandError("Source and target currency are the same.")
 
     if source_currency == 'HRK':
-        rates = fetch_daily(date)
-        currency = target_currency
-        rate, units = _get_median_rate(rates, currency)
-        result = amount / (rate / units)
+        rate = _get_rate(date, target_currency)
+        result = amount / (rate.median_rate / rate.unit_value)
+    else:
+        rate = _get_rate(date, source_currency)
+        result = amount * (rate.median_rate / rate.unit_value)
 
-    elif target_currency == 'HRK':
-        rates = fetch_daily(date)
-        currency = source_currency
-        rate, units = _get_median_rate(rates, currency)
-        result = amount * (rate / units)
-
-    pattern = "{{:.{}f}}".format(precision)
-    rounded = pattern.format(result)
+    exponent = Decimal(10) ** -precision
+    result = result.quantize(exponent)
 
     if value_only:
-        print_out(rounded)
+        print_out(result)
     else:
-        print_out("{} {} = <green>{} {}</green>".format(
-            amount, source_currency, rounded, target_currency))
-        print_out("\nUsing the median rate {} {} = {} HRK defined on {}".format(
-            units, currency, rate, date))
+        print_out(f"{amount} {source_currency} = <green>{result} {target_currency}</green>\n")
+        print_out(
+            f"Using the median rate {rate.unit_value} {rate.currency_code} = "
+            f"{rate.median_rate} HRK defined on {rate.date}"
+        )
 
 
 def abspath(path):
@@ -156,8 +155,7 @@ def abspath(path):
 def chart(currency, template, start, end, days, **kwargs):
     start_date, end_date = _range_dates(start, end, days)
     rates = fetch_range(currency, start_date, end_date)
-    plot_data = "\n".join(["{} {}".format(rate['date'], rate['median_rate'])
-        for rate in rates])
+    plot_data = "\n".join([f"{rate.date} {rate.median_rate}" for rate in rates])
 
     script_template = (
         files("hnbex.templates")

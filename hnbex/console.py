@@ -7,6 +7,7 @@ import sys
 from argparse import ArgumentParser, ArgumentTypeError
 from collections import namedtuple
 from datetime import date, datetime, timedelta
+from decimal import Decimal
 
 from hnbex import commands
 from hnbex.api import ApiError
@@ -29,14 +30,21 @@ def date_type(value):
     try:
         value = datetime.strptime(value, "%Y-%m-%d").date()
     except:
-        raise ArgumentTypeError("Invalid date '{}'".format(value))
+        raise ArgumentTypeError(f"Invalid date '{value}'")
 
     return value
 
 
+def decimal_type(value):
+    try:
+        return Decimal(value)
+    except:
+        raise ArgumentTypeError(f"Invalid decimal value '{value}'")
+
+
 def currency_type(value):
     if not re.match("^[a-z]{3}$", value, re.IGNORECASE):
-        raise ArgumentTypeError("Invalid currency code '{}'".format(value))
+        raise ArgumentTypeError(f"Invalid currency code '{value}'")
 
     return value.upper()
 
@@ -104,7 +112,7 @@ COMMANDS = [
         arguments=[
             (["amount"], {
                 "help": "the amount to convert",
-                "type": float,
+                "type": decimal_type,
             }),
             (["source_currency"], {
                 "help": "currency from which to convert",

@@ -3,51 +3,67 @@
 import json
 import logging
 
-from urllib.request import urlopen
+from dataclasses import dataclass
+from datetime import date
+from decimal import Decimal
 from urllib.error import HTTPError
-
+from urllib.request import urlopen
 
 logger = logging.getLogger('hnbex')
+
+
+@dataclass
+class ExchangeRate:
+    date: date
+    currency_code: str
+    unit_value: int
+    buying_rate: Decimal
+    median_rate: Decimal
+    selling_rate: Decimal
 
 
 class ApiError(Exception):
     pass
 
 
-def _process_error(e):
-    """
-    Attempt to extract an error message from the API response.
-    """
+def fetch_daily(date, currency_code=None):
+    url = f"https://api.hnb.hr/tecajn/v2?datum-primjene={date}"
 
-    try:
-        error_msg = json.loads(e.read().decode('utf-8'))['error']
-    except:
-        error_msg = str(e)
+    if currency_code:
+        url += f"&valuta={currency_code}"
 
-    raise ApiError(error_msg)
+    return _api_get(url)
 
 
-def _api_get(url):
+def fetch_range(currency: str, from_date: date, to_date: date):
+    url = f"https://api.hnb.hr/tecajn/v2?valuta={currency}&datum-primjene-od={from_date}&datum-primjene-do={to_date}"
+
+    return _api_get(url)
+
+
+def _api_get(url: str) -> list[ExchangeRate]:
     logger.debug(">>> GET {}".format(url))
 
     try:
         with urlopen(url) as response:
             data = response.read().decode('utf-8')
             logger.debug("<<< {}".format(data))
-            return json.loads(data)
+            return [_to_rate(r) for r in json.loads(data)]
     except HTTPError as e:
-        logger.error("<<< {} {}".format(e.code, e.msg))
-        _process_error(e)
+        logger.error(f"<<< {e}")
+        raise ApiError()
 
 
-def fetch_daily(date):
-    url = 'http://hnbex.eu/api/v1/rates/daily/?date={:%Y-%m-%d}'.format(date)
-
-    return _api_get(url)
+def _parse_decimal(value: str) -> Decimal:
+    return Decimal(value.replace(",", "."))
 
 
-def fetch_range(currency, from_date, to_date):
-    url = 'http://hnbex.eu/api/v1/rates/{}/?from={:%Y-%m-%d}&to={:%Y-%m-%d}'.format(
-        currency, from_date, to_date)
-
-    return _api_get(url)
+def _to_rate(record: dict) -> ExchangeRate:
+    return ExchangeRate(
+        date=date.fromisoformat(record["datum_primjene"]),
+        currency_code=record["valuta"],
+        unit_value=record["jedinica"],
+        buying_rate=_parse_decimal(record["kupovni_tecaj"]),
+        median_rate=_parse_decimal(record["srednji_tecaj"]),
+        selling_rate=_parse_decimal(record["prodajni_tecaj"]),
+    )

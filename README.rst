@@ -2,8 +2,7 @@ HNB Exchange Rate CLI
 =====================
 
 Displays exchange rates for Croatian Kuna (HRK) from the Croatian National Bank
-(HNB). Data is fetched from http://hnbex.eu/. Thanks to `Good Code
-<http://goodcode.io/>`_ for providing this service.
+(HNB). Data is fetched from the [HNB API](https://api.hnb.hr/).
 
 
 .. image:: https://img.shields.io/badge/author-%40ihabunek-blue.svg?maxAge=3600&style=flat-square
@@ -16,7 +15,7 @@ Displays exchange rates for Croatian Kuna (HRK) from the Croatian National Bank
 Installation
 ------------
 
-Requires **Python 3.3** or greater.
+Requires **Python 3.7** or greater.
 
 Drawing charts requires `gnuplot <http://www.gnuplot.info/>`_.
 
