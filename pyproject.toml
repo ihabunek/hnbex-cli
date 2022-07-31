@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hnbex-cli"
+version = "1.0.0"
+authors = [{ name="Ivan Habunek", email="ivan@habunek.com" }]
+description = "CLI tool for displaying exchange rates for Croatian Kuna"
+readme = "README.rst"
+license = { file="LICENSE" }
+requires-python = ">=3.3"
+keywords=["hnb", "exchange", "rate", "currency"]
+
+classifiers = [
+    "Environment :: Console",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/ihabunek/hnbex-cli"
+"Issues" = "https://github.com/ihabunek/hnbex-cli/issues"
+
+[project.scripts]
+hnbex = "hnbex.console:main"
