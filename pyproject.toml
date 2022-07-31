@@ -2,6 +2,12 @@
 requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.package-data]
+"hnbex.templates" = ["*.gnuplot"]
+
 [project]
 name = "hnbex-cli"
 version = "1.0.0"

@@ -1,6 +1,7 @@
 import tempfile
 
 from datetime import timedelta
+from importlib.resources import files
 from os.path import realpath, join, dirname
 from subprocess import call
 
@@ -158,8 +159,11 @@ def chart(currency, template, start, end, days, **kwargs):
     plot_data = "\n".join(["{} {}".format(rate['date'], rate['median_rate'])
         for rate in rates])
 
-    with open(abspath('../templates/{}.gnuplot'.format(template))) as f:
-        script_template = f.read()
+    script_template = (
+        files("hnbex.templates")
+        .joinpath("{}.gnuplot".format(template))
+        .read_text()
+    )
 
     with tempfile.NamedTemporaryFile() as script_file:
         with tempfile.NamedTemporaryFile() as data_file:
