@@ -9,10 +9,10 @@ from decimal import Decimal
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
-logger = logging.getLogger('hnbex')
+logger = logging.getLogger("hnbex")
 
 
-@dataclass
+@dataclass(frozen=True)
 class ExchangeRate:
     date: date
     currency_code: str
