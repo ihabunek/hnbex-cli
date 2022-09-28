@@ -6,6 +6,7 @@ import logging
 from dataclasses import dataclass
 from datetime import date
 from decimal import Decimal
+from typing import List, Optional
 from urllib.error import HTTPError
 from urllib.request import urlopen
 
@@ -26,7 +27,7 @@ class ApiError(Exception):
     pass
 
 
-def fetch_daily(date, currency_code=None):
+def fetch_daily(date: date, currency_code: Optional[str] = None) -> List[ExchangeRate]:
     url = f"https://api.hnb.hr/tecajn/v2?datum-primjene={date}"
 
     if currency_code:
@@ -35,13 +36,13 @@ def fetch_daily(date, currency_code=None):
     return _api_get(url)
 
 
-def fetch_range(currency: str, from_date: date, to_date: date):
+def fetch_range(currency: str, from_date: date, to_date: date) -> List[ExchangeRate]:
     url = f"https://api.hnb.hr/tecajn/v2?valuta={currency}&datum-primjene-od={from_date}&datum-primjene-do={to_date}"
 
     return _api_get(url)
 
 
-def _api_get(url: str) -> list[ExchangeRate]:
+def _api_get(url: str) -> List[ExchangeRate]:
     logger.debug(">>> GET {}".format(url))
 
     try:
