@@ -15,7 +15,7 @@ authors = [{ name="Ivan Habunek", email="ivan@habunek.com" }]
 description = "CLI tool for displaying exchange rates for Croatian Kuna"
 readme = "README.rst"
 license = { file="LICENSE" }
-requires-python = ">=3.3"
+requires-python = ">=3.7"
 keywords=["hnb", "exchange", "rate", "currency"]
 
 classifiers = [
