@@ -24,6 +24,10 @@ def daily(date, **kwargs):
     print_out(f"HNB exchange rates on <yellow>{date:%Y-%m-%d}</yellow>")
     print_out()
 
+    if len(rates) == 0:
+        print_out("No data found for given date")
+        return
+
     def spread(rate):
         buy = rate.buying_rate
         sell = rate.selling_rate
