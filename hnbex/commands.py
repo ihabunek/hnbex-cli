@@ -100,8 +100,8 @@ def range(currency, start, end, days, **kwargs):
     rates = fetch_range(currency, start_date, end_date)
 
     print_out(
-        f"HNB exchange rates for <yellow>{currency}</yellow> "
-        f"from <yellow>{start_date:%Y-%m-%d}</yellow> "
+        f"HNB exchange rates for <yellow>{currency}</yellow>",
+        f"from <yellow>{start_date:%Y-%m-%d}</yellow>",
         f"to <yellow>{end_date:%Y-%m-%d}</yellow>\n"
     )
 
@@ -147,7 +147,7 @@ def convert(amount, source_currency, target_currency, date, precision, value_onl
     else:
         print_out(f"{amount} {source_currency} = <green>{result} {target_currency}</green>\n")
         print_out(
-            f"Using the median rate {rate.unit_value} {rate.currency_code} = "
+            f"Using the median rate {rate.unit_value} {rate.currency_code} =",
             f"{rate.median_rate} HRK defined on {rate.date}"
         )
 
