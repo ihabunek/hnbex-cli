@@ -10,7 +10,7 @@ include-package-data = true
 
 [project]
 name = "hnbex-cli"
-version = "1.1.0"
+version = "2.0.0"
 authors = [{ name="Ivan Habunek", email="ivan@habunek.com" }]
 description = "CLI tool for displaying exchange rates for Croatian Kuna"
 readme = "README.rst"

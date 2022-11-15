@@ -1,7 +1,7 @@
 hnbex-cli changelog
 ====================
 
-**2.0.0** (TBA)
+**2.0.0 (2022-11-15)**
 
 * **Breaking:** Requires Python 3.7+
 * Read data from api.hnb.hr, since hnbex.eu is shutting down
