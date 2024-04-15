@@ -1,6 +1,11 @@
 hnbex-cli changelog
 ====================
 
+**2.1.0 (2024-04-15)**
+
+* Switch to HNB API v3
+* Add --invert option
+
 **2.0.0 (2022-11-15)**
 
 * **Breaking:** Requires Python 3.7+
