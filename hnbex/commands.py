@@ -31,21 +31,20 @@ def daily(date, **kwargs):
     def spread(rate):
         buy = rate.buying_rate
         sell = rate.selling_rate
-        if sell > 0:
-            diff = (sell - buy) / sell
+        if buy > 0:
+            diff = (buy - sell) / buy
             return f"{diff:.2%}"
         return ""
 
     data = [(
         wrap("yellow", rate.currency_code),
-        rate.unit_value,
         rate.buying_rate,
         rate.median_rate,
         rate.selling_rate,
         spread(rate)
     ) for rate in rates]
 
-    headers = ["Currency", "Unit", "Buying", "Median", "Selling", "Spread"]
+    headers = ["Currency", "Buying", "Median", "Selling", "Spread"]
     print_table(headers, data)
 
 
@@ -85,7 +84,6 @@ def _range_lines(rates):
 
         yield(
             wrap("yellow", rate.date),
-            rate.unit_value,
             rate.buying_rate,
             rate.median_rate,
             rate.selling_rate,
@@ -109,7 +107,7 @@ def range(currency, start, end, days, **kwargs):
         print_out("No data found for given date range")
         return
 
-    headers = ['Date', 'Unit', 'Buying', 'Median', 'Selling', 'Diff']
+    headers = ['Date', 'Buying', 'Median', 'Selling', 'Diff']
     print_table(headers, _range_lines(rates))
 
 
