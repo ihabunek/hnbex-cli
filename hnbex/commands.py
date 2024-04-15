@@ -18,7 +18,7 @@ def wrap(tag, text):
     return f"<{tag}>{text}</{tag}>"
 
 
-def daily(date, **kwargs):
+def daily(date, invert: bool, **kwargs):
     rates = fetch_daily(date)
 
     print_out(f"HNB exchange rates on <yellow>{date:%Y-%m-%d}</yellow>")
@@ -38,9 +38,9 @@ def daily(date, **kwargs):
 
     data = [(
         wrap("yellow", rate.currency_code),
-        rate.buying_rate,
-        rate.median_rate,
-        rate.selling_rate,
+        _maybe_invert(rate.buying_rate, invert),
+        _maybe_invert(rate.median_rate, invert),
+        _maybe_invert(rate.selling_rate, invert),
         spread(rate)
     ) for rate in rates]
 
@@ -74,26 +74,26 @@ def _diff(old, new):
     return f" {formatted}"
 
 
-def _range_lines(rates):
+def _range_lines(rates, invert):
     prev_median = None
     diff_median = None
 
     for rate in rates:
-        median = rate.median_rate
+        median = _maybe_invert(rate.median_rate, invert)
         diff_median = _diff(prev_median, median)
 
         yield(
             wrap("yellow", rate.date),
-            rate.buying_rate,
-            rate.median_rate,
-            rate.selling_rate,
+            _maybe_invert(rate.buying_rate, invert),
+            _maybe_invert(rate.median_rate, invert),
+            _maybe_invert(rate.selling_rate, invert),
             diff_median,
         )
 
-        prev_median = rate.median_rate
+        prev_median = median
 
 
-def range(currency, start, end, days, **kwargs):
+def range(currency, start, end, days, invert, **kwargs):
     start_date, end_date = _range_dates(start, end, days)
     rates = fetch_range(currency, start_date, end_date)
 
@@ -108,7 +108,7 @@ def range(currency, start, end, days, **kwargs):
         return
 
     headers = ['Date', 'Buying', 'Median', 'Selling', 'Diff']
-    print_table(headers, _range_lines(rates))
+    print_table(headers, _range_lines(rates, invert))
 
 
 def _get_rate(date, currency):
@@ -137,8 +137,7 @@ def convert(amount, source_currency, target_currency, date, precision, value_onl
         rate = _get_rate(date, source_currency)
         result = amount / rate.median_rate
 
-    exponent = Decimal(10) ** -precision
-    result = result.quantize(exponent)
+    result = quantize(result, precision)
 
     if value_only:
         print_out(result)
@@ -189,3 +188,12 @@ def _plot(script_file):
     except FileNotFoundError as ex:
         print_err(ex)
         raise CommandError("Charting failed. Do you have gnuplot installed?")
+
+
+def _maybe_invert(value: Decimal, invert: bool):
+    return quantize(1 / value, 6) if invert else value
+
+
+def quantize(decimal: Decimal, precision: int):
+    exponent = Decimal(10) ** -precision
+    return decimal.quantize(exponent)

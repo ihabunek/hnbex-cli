@@ -62,6 +62,11 @@ RANGE_ARGS = [
         "type": int,
         "default": 30
     }),
+    (["-i", "--invert"], {
+        "help": "invert the exchange rate",
+        "action": "store_true",
+        "default": False,
+    }),
 ]
 
 
@@ -75,6 +80,11 @@ COMMANDS = [
                 "nargs": "?",
                 "type": date_type,
                 "default": date.today(),
+            }),
+            (["-i", "--invert"], {
+                "help": "invert the exchange rate",
+                "action": "store_true",
+                "default": False,
             }),
         ],
     ),
