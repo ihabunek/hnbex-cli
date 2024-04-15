@@ -124,18 +124,18 @@ def convert(amount, source_currency, target_currency, date, precision, value_onl
     if precision < 0:
         raise CommandError("Precision must be greater than 0.")
 
-    if source_currency != 'HRK' and target_currency != 'HRK':
-        raise CommandError("Either source or target currency must be HRK.")
+    if source_currency != 'EUR' and target_currency != 'EUR':
+        raise CommandError("Either source or target currency must be EUR.")
 
     if source_currency == target_currency:
         raise CommandError("Source and target currency are the same.")
 
-    if source_currency == 'HRK':
+    if source_currency == 'EUR':
         rate = _get_rate(date, target_currency)
-        result = amount / (rate.median_rate / rate.unit_value)
+        result = amount * rate.median_rate
     else:
         rate = _get_rate(date, source_currency)
-        result = amount * (rate.median_rate / rate.unit_value)
+        result = amount / rate.median_rate
 
     exponent = Decimal(10) ** -precision
     result = result.quantize(exponent)
@@ -145,8 +145,8 @@ def convert(amount, source_currency, target_currency, date, precision, value_onl
     else:
         print_out(f"{amount} {source_currency} = <green>{result} {target_currency}</green>\n")
         print_out(
-            f"Using the median rate {rate.unit_value} {rate.currency_code} =",
-            f"{rate.median_rate} HRK defined on {rate.date}"
+            f"Using the median rate 1 EUR =",
+            f"{rate.median_rate} {rate.currency_code} defined on {rate.date}"
         )
 
 
