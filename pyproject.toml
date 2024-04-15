@@ -25,9 +25,20 @@ classifiers = [
     "Programming Language :: Python :: 3",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "build",
+    "twine",
+]
+
 [project.urls]
 "Homepage" = "https://github.com/ihabunek/hnbex-cli"
 "Issues" = "https://github.com/ihabunek/hnbex-cli/issues"
 
 [project.scripts]
 hnbex = "hnbex.console:main"
+
+[tool.pyright]
+include = ["hnbex"]
+typeCheckingMode = "strict"
+pythonVersion = "3.8"
